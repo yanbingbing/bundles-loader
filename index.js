@@ -9,7 +9,16 @@ module.exports = function (source) {
     var callback = this.async();
     this.cacheable();
 
-    var components = JSON.parse(source.trim()) || [];
+    var components;
+    try {
+        components = JSON.parse(source.trim()) || [];
+    } catch (e) {
+        try {
+            components = this.exec(source, this.resourcePath);
+        } catch (e2) {
+            components = [];
+        }
+    }
 
     if (components.components) {
         components = components.components;
@@ -32,7 +41,7 @@ module.exports = function (source) {
             }
             var componentName = item.componentName || pkgJson.componentName;
             var category = item.category || pkgJson.category;
-            components[index] = '{"componentName": "' + componentName + '", category: "' + category + '", "prototype": require("' + ${pkg} + '/' + (pkgJson.prototype || "prototype") + '")}';
+            components[index] = '{"componentName": "' + componentName + '", "category": "' + category + '", "prototype": require("' + pkg + '/' + (pkgJson.prototype || "prototype") + '")}';
             complete();
         });
     });
@@ -41,7 +50,7 @@ module.exports = function (source) {
         completed += 1;
 
         if (completed >= total) {
-            callback(null, '"use strict";\nmodule.exports = ['+components.join(',\n')+'];');
+            callback(null, '"use strict";\nmodule.exports = [' + components.join(',\n') + '];');
         }
     }
 };
