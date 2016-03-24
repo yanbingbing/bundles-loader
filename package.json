@@ -1,0 +1,24 @@
+{
+  "name": "components-loader",
+  "version": "1.0.0-beta",
+  "fullname": "Read Components Loader",
+  "description": "A Webpack Loader to read components from config",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yanbingbing/components-loader.git"
+  },
+  "keywords": [
+    "webpack",
+    "loader",
+    "webpack-loader"
+  ],
+  "author": "onbing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yanbingbing/components-loader/issues"
+  },
+  "homepage": "https://github.com/yanbingbing/components-loader#readme"
+}
+
