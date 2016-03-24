@@ -26,10 +26,10 @@ module.exports = function (source) {
     components.forEach(function (item, index) {
         var pkg = typeof item === 'string' ? item : item.package;
         _this.resolve(resourcePath, pkg + '/package.json', function (err, jsonpath) {
-            if (err) {
-                return callback(err);
+            var pkgJson = {};
+            if (!err) {
+                pkgJson = require(jsonpath) || {};
             }
-            var pkgJson = require(jsonpath) || {};
             var componentName = item.componentName || pkgJson.componentName;
             var category = item.category || pkgJson.category;
             components[index] = '{"componentName": "' + componentName + '", category: "' + category + '", "prototype": require("' + ${pkg} + '/' + (pkgJson.prototype || "prototype") + '")}';
