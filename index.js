@@ -1,5 +1,6 @@
 var path = require('path');
 var fs = require('fs');
+var lutils = require('loader-utils');
 
 /**
  * @param {String} source
@@ -30,6 +31,10 @@ module.exports = function (source) {
 
     var _this = this;
     var resourcePath = this.resourcePath;
+    var query = lutils.parseQuery(this.query);
+    var resourceQuery = lutils.parseQuery(this.resourceQuery);
+    var entry = resourceQuery.entry || query.entry || "main";
+
     var completed = 0, total = components.length;
 
     components.forEach(function (item, index) {
@@ -41,7 +46,7 @@ module.exports = function (source) {
             }
             var componentName = item.componentName || pkgJson.componentName;
             var category = item.category || pkgJson.category;
-            components[index] = '{"componentName": "' + componentName + '", "category": "' + category + '", "prototype": require("' + pkg + '/' + (pkgJson.prototype || "prototype") + '")}';
+            components[index] = '{"componentName": "' + componentName + '", "category": "' + category + '", "module": require("' + pkg + '/' + (pkgJson[entry] || entry) + '")}';
             complete();
         });
     });

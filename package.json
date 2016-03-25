@@ -1,6 +1,6 @@
 {
   "name": "components-loader",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "fullname": "Read Components Loader",
   "description": "A Webpack Loader to read components from config",
   "main": "index.js",
@@ -14,6 +14,9 @@
     "loader",
     "webpack-loader"
   ],
+  "dependencies": {
+    "loader-utils": "^0.2"
+  },
   "author": "onbing",
   "license": "MIT",
   "bugs": {
