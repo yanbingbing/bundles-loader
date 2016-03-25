@@ -33,7 +33,7 @@ module.exports = function (source) {
     var resourcePath = this.resourcePath;
     var query = lutils.parseQuery(this.query);
     var resourceQuery = lutils.parseQuery(this.resourceQuery);
-    var entry = resourceQuery.entry || query.entry || "main";
+    var defaultEntry = resourceQuery.entry || query.entry || "main";
 
     var completed = 0, total = components.length;
 
@@ -44,8 +44,9 @@ module.exports = function (source) {
             if (!err) {
                 pkgJson = require(jsonpath) || {};
             }
-            var componentName = item.componentName || pkgJson.componentName;
-            var category = item.category || pkgJson.category;
+            var componentName = item.componentName || pkgJson.componentName || "";
+            var category = item.category || pkgJson.category || "";
+            var entry = item.entry || defaultEntry;
             components[index] = '{"componentName": "' + componentName + '", "category": "' + category + '", "module": require("' + pkg + '/' + (pkgJson[entry] || entry) + '")}';
             complete();
         });
