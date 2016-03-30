@@ -1,3 +1,5 @@
+"use strict";
+
 var path = require('path');
 var fs = require('fs');
 var lutils = require('loader-utils');
@@ -24,14 +26,15 @@ module.exports = function (source) {
     if (components.components) {
         components = components.components;
     } else if (components.dependencies || components.devDependencies) {
-        components = components.dependencies ? Object.keys(components.dependencies).filter(function (item) {
+        var temp = components.dependencies ? Object.keys(components.dependencies).filter(function (item) {
             return /^(@ali\/)?vc\-.+/.test(item);
         }) : [];
         components.devDependencies && Object.keys(components.devDependencies).forEach(function (item) {
-            if (/^(@ali\/)?vc\-.+/.test(item) && components.indexOf(item) < 0) {
-                components.push(item);
+            if (/^(@ali\/)?vc\-.+/.test(item) && temp.indexOf(item) < 0) {
+                temp.push(item);
             }
         });
+        components = temp;
     }
 
     if (!Array.isArray(components)) {
