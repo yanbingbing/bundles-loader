@@ -23,6 +23,15 @@ module.exports = function (source) {
 
     if (components.components) {
         components = components.components;
+    } else if (components.dependencies || components.devDependencies) {
+        components = components.dependencies ? Object.keys(components.dependencies).filter(function (item) {
+            return /^(@ali\/)?vc\-.+/.test(item);
+        }) : [];
+        components.devDependencies && Object.keys(components.devDependencies).forEach(function (item) {
+            if (/^(@ali\/)?vc\-.+/.test(item) && components.indexOf(item) < 0) {
+                components.push(item);
+            }
+        });
     }
 
     if (!Array.isArray(components)) {

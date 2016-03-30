@@ -1,6 +1,6 @@
 {
   "name": "components-loader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "fullname": "Read Components Loader",
   "description": "A Webpack Loader to read components from config",
   "main": "index.js",
