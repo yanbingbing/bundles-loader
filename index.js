@@ -4,6 +4,13 @@ var path = require('path');
 var fs = require('fs');
 var lutils = require('loader-utils');
 
+function getCamelName(name) {
+    var words = name.replace(/^(@ali\/)?((uxcore|tingle)-)?(.+)/, "$4").split('-');
+    return words.map(function (word) {
+        return word[0].toUpperCase() + word.substring(1);
+    }).join('');
+}
+
 /**
  * @param {String} source
  */
@@ -45,26 +52,95 @@ module.exports = function (source) {
     var resourcePath = this.resourcePath;
     var query = lutils.parseQuery(this.query);
     var resourceQuery = lutils.parseQuery(this.resourceQuery);
-    var defaultEntry = resourceQuery.entry || query.entry || "main";
+    var entry = resourceQuery.entry || query.entry || "main";
+
+    function tryfiles(files, callback) {
+        var fallback = files.pop();
+
+        function stat() {
+            var file = files.shift();
+
+            if (!file) {
+                return callback(fallback);
+            }
+
+            _this.resolve(resourcePath, file, function (err, filepath) {
+                if (err) {
+                    return stat();
+                }
+                fs.stat(filepath, function (err, stats) {
+                    if (err || !stats.isFile()) {
+                        stat();
+                    } else {
+                        callback(file);
+                    }
+                });
+            });
+        }
+
+        stat();
+    }
+
+    function parseInfo(index, pkg, pkgJson, info, callback) {
+        var ret = {
+            name: pkg,
+            componentName: info.componentName || pkgJson.componentName || null,
+            category: info.category || pkgJson.category || null
+        };
+        function done(path) {
+            ret.path = path;
+            callback(index, ret);
+        }
+        if (pkgJson[entry]) {
+            return done(pkgJson[entry]);
+        }
+        if (entry === 'prototype') {
+            return tryfiles([
+                // trys
+                'build/prototype.js', 'lib/prototype.js',
+                // fallback
+                entry
+            ], done);
+        }
+        if (entry === 'prototypeView') {
+            var camelName = getCamelName(pkgJson.name || pkg);
+            return tryfiles([
+                // trys
+                'build/prototypeView.js', 'lib/prototypeView.js',
+                'build/'+camelName+'.js', 'lib/'+camelName+'.js',
+                // fallback
+                pkgJson.main || entry
+            ], done);
+        }
+        done(entry);
+    }
 
     var completed = 0, total = components.length;
 
     components.forEach(function (item, index) {
-        var pkg = typeof item === 'string' ? item : item.package;
+        var pkg = typeof item === 'string' ? item : (item.package || item.name);
         _this.resolve(resourcePath, pkg + '/package.json', function (err, jsonpath) {
             var pkgJson = {};
             if (!err) {
                 pkgJson = require(jsonpath) || {};
             }
-            var componentName = item.componentName || pkgJson.componentName || "";
-            var category = item.category || pkgJson.category || "";
-            var entry = item.entry || defaultEntry;
-            components[index] = '{"componentName": "' + componentName + '", "category": "' + category + '", "module": require("' + pkg + '/' + (pkgJson[entry] || entry) + '")}';
-            complete();
+            parseInfo(index, pkg, pkgJson, item, complete);
         });
     });
 
-    function complete() {
+    function complete(index, ret) {
+        var fields = [
+            '"name": "'+ret.name+'"',
+            '"module": require("'+ret.name+'/'+ret.path+'")'
+        ];
+        if (ret.componentName) {
+            fields.push('"componentName": "' + ret.componentName + '"');
+        }
+        if (ret.category) {
+            fields.push('"category": "' + ret.category + '"');
+        }
+        components[index] = '{'+fields.join(', ')+'}';
+
         completed += 1;
 
         if (completed >= total) {
