@@ -5,7 +5,8 @@ var fs = require('fs');
 var lutils = require('loader-utils');
 
 function getCamelName(name) {
-    var words = name.replace(/^(@ali\/)?((uxcore|tingle)-)?(.+)/, "$4").split('-');
+    name = path.basename(name);
+    var words = name.replace(/^((uxcore|tingle|vc)-)?(.+)/, "$3").split('-');
     return words.map(function (word) {
         return word[0].toUpperCase() + word.substring(1);
     }).join('');
@@ -82,9 +83,11 @@ module.exports = function (source) {
     }
 
     function parseInfo(index, pkg, pkgJson, info, callback) {
+        var camelName = getCamelName(pkgJson.name || pkg);
         var ret = {
-            name: pkg,
-            componentName: info.componentName || pkgJson.componentName || null,
+            name: pkgJson.name || pkg,
+            pkg: pkg,
+            componentName: info.componentName || pkgJson.componentName || camelName,
             category: info.category || pkgJson.category || null
         };
         function done(path) {
@@ -103,7 +106,6 @@ module.exports = function (source) {
             ], done);
         }
         if (entry === 'prototypeView') {
-            var camelName = getCamelName(pkgJson.name || pkg);
             return tryfiles([
                 // trys
                 'build/prototypeView.js', 'lib/prototypeView.js',
@@ -131,6 +133,7 @@ module.exports = function (source) {
     function complete(index, ret) {
         var fields = [
             '"name": "'+ret.name+'"',
+            '"package": "'+ret.pkg+'"',
             '"module": require("'+ret.name+'/'+ret.path+'")'
         ];
         if (ret.componentName) {
