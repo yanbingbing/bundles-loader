@@ -55,7 +55,7 @@ module.exports = function (source) {
     var resourceQuery = lutils.parseQuery(this.resourceQuery);
     var entry = resourceQuery.entry || query.entry || "main";
 
-    function tryfiles(files, callback) {
+    function tryfiles(pkg, files, callback) {
         var fallback = files.pop();
 
         function stat() {
@@ -65,7 +65,7 @@ module.exports = function (source) {
                 return callback(fallback);
             }
 
-            _this.resolve(resourcePath, file, function (err, filepath) {
+            _this.resolve(resourcePath, pkg + '/' + file, function (err, filepath) {
                 if (err) {
                     return stat();
                 }
@@ -98,7 +98,7 @@ module.exports = function (source) {
             return done(pkgJson[entry]);
         }
         if (entry === 'prototype') {
-            return tryfiles([
+            return tryfiles(pkg, [
                 // trys
                 'build/prototype.js', 'lib/prototype.js',
                 // fallback
@@ -106,7 +106,7 @@ module.exports = function (source) {
             ], done);
         }
         if (entry === 'prototypeView') {
-            return tryfiles([
+            return tryfiles(pkg, [
                 // trys
                 'build/prototypeView.js', 'lib/prototypeView.js',
                 'build/'+camelName+'.js', 'lib/'+camelName+'.js',
