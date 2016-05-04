@@ -100,7 +100,7 @@ module.exports = function (source) {
         if (entry === 'prototype') {
             return tryfiles(pkg, [
                 // trys
-                'build/prototype.js', 'lib/prototype.js',
+                'build/prototype.js', 'dist/prototype.js', 'lib/prototype.js',
                 // fallback
                 entry
             ], done);
@@ -108,8 +108,8 @@ module.exports = function (source) {
         if (entry === 'prototypeView') {
             return tryfiles(pkg, [
                 // trys
-                'build/prototypeView.js', 'lib/prototypeView.js',
-                'build/'+camelName+'.js', 'lib/'+camelName+'.js',
+                'build/prototypeView.js', 'dist/prototypeView.js', 'lib/prototypeView.js',
+                'build/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
                 // fallback
                 pkgJson.main || entry
             ], done);
