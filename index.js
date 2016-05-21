@@ -86,8 +86,7 @@ module.exports = function (source) {
         var camelName = getCamelName(pkgJson.name || pkg);
         var ret = {
             name: pkgJson.name || pkg,
-            pkg: pkg,
-            componentName: info.componentName || pkgJson.componentName || camelName,
+            componentName: info.componentName || pkgJson.componentName,
             category: info.category || pkgJson.category || null
         };
         function done(path) {
@@ -110,8 +109,9 @@ module.exports = function (source) {
                 // trys
                 'build/prototypeView.js', 'dist/prototypeView.js', 'lib/prototypeView.js',
                 'build/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
+                pkgJson.main || entry,
                 // fallback
-                pkgJson.main || entry
+                null
             ], done);
         }
         done(entry);
@@ -132,9 +132,8 @@ module.exports = function (source) {
 
     function complete(index, ret) {
         var fields = [
-            '"name": "'+ret.name+'"',
-            '"package": "'+ret.pkg+'"',
-            '"module": require("'+ret.name+'/'+ret.path+'")'
+            '"name": "' + ret.name + '"',
+            '"module": ' + (ret.path ? ('require("'+ret.name+'/'+ret.path+'")') : 'null')
         ];
         if (ret.componentName) {
             fields.push('"componentName": "' + ret.componentName + '"');
