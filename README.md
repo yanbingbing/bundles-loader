@@ -1,2 +1,2 @@
-# components-loader
-components loader for webpack
+# bundles-loader
+bundles loader for webpack
