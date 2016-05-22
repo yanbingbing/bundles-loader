@@ -1,6 +1,6 @@
 {
   "name": "bundles-loader",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "fullname": "Read Bundles Loader",
   "description": "A Webpack Loader to read components from config",
   "main": "index.js",
