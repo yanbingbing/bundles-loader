@@ -24,11 +24,7 @@ module.exports = function (source) {
     try {
         components = JSON.parse(source.trim()) || [];
     } catch (e) {
-        try {
-            components = this.exec(source, this.resourcePath);
-        } catch (e2) {
-            components = [];
-        }
+        components = [];
     }
 
     if (components.components) {
@@ -50,7 +46,7 @@ module.exports = function (source) {
     }
 
     var _this = this;
-    var resourcePath = this.resourcePath;
+    var resourcePath = path.dirname(this.resourcePath);
     var query = lutils.parseQuery(this.query);
     var resourceQuery = lutils.parseQuery(this.resourceQuery);
     var entry = resourceQuery.entry || query.entry || "main";
@@ -69,13 +65,8 @@ module.exports = function (source) {
                 if (err) {
                     return stat();
                 }
-                fs.stat(filepath, function (err, stats) {
-                    if (err || !stats.isFile()) {
-                        stat();
-                    } else {
-                        callback(file);
-                    }
-                });
+
+                callback(file);
             });
         }
 
