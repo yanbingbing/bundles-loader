@@ -24,7 +24,11 @@ module.exports = function (source) {
     try {
         components = JSON.parse(source.trim()) || [];
     } catch (e) {
-        components = [];
+        try {
+            components = this.exec(source, this.resourcePath);
+        } catch (e2) {
+            components = [];
+        }
     }
 
     if (components.components) {
@@ -41,7 +45,7 @@ module.exports = function (source) {
         components = temp;
     }
 
-    if (!Array.isArray(components)) {
+    if (!Array.isArray(components) || components.length < 1) {
         return callback(null, 'module.exports = [];');
     }
 
