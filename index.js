@@ -105,6 +105,25 @@ module.exports = function (source) {
                 null
             ], done);
         }
+        if (entry === 'view') {
+            return tryfiles(pkg, [
+                // trys
+                'build/view.js', 'dist/view.js', 'lib/view.js',
+                'build/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
+                // fallback
+                pkgJson.main || entry
+            ], done);
+        }
+        if (entry === 'view.mobile') {
+            return tryfiles(pkg, [
+                // trys
+                'build/view.mobile.js', 'dist/view.mobile.js', 'lib/view.mobile.js',
+                'build/view.js', 'dist/view.js', 'lib/view.js',
+                'build/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
+                // fallback
+                pkgJson.main || entry
+            ], done);
+        }
         done(entry);
     }
 
