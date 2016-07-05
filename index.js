@@ -20,6 +20,11 @@ module.exports = function (source) {
     var callback = this.async();
     this.cacheable();
 
+    var buildEntry = "build";
+    if (process.env.VDEBUG === "1") {
+        buildEntry = "src";
+    }
+
     var components;
     try {
         components = JSON.parse(source.trim()) || [];
@@ -94,7 +99,7 @@ module.exports = function (source) {
         if (entry === 'prototype') {
             return tryfiles(pkg, [
                 // trys
-                'build/prototype.js', 'dist/prototype.js', 'lib/prototype.js',
+                buildEntry + '/prototype.js', 'dist/prototype.js', 'lib/prototype.js',
                 // fallback
                 entry
             ], done);
@@ -102,8 +107,8 @@ module.exports = function (source) {
         if (entry === 'prototypeView') {
             return tryfiles(pkg, [
                 // trys
-                'build/prototypeView.js', 'dist/prototypeView.js', 'lib/prototypeView.js',
-                'build/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
+                buildEntry + '/prototypeView.js', 'dist/prototypeView.js', 'lib/prototypeView.js',
+                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
                 pkgJson.main || entry,
                 // fallback
                 null
@@ -112,8 +117,8 @@ module.exports = function (source) {
         if (entry === 'view') {
             return tryfiles(pkg, [
                 // trys
-                'build/view.js', 'dist/view.js', 'lib/view.js',
-                'build/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
+                buildEntry + '/view.js', 'dist/view.js', 'lib/view.js',
+                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
                 // fallback
                 pkgJson.main || entry
             ], done);
@@ -121,9 +126,9 @@ module.exports = function (source) {
         if (entry === 'view.mobile') {
             return tryfiles(pkg, [
                 // trys
-                'build/view.mobile.js', 'dist/view.mobile.js', 'lib/view.mobile.js',
-                'build/view.js', 'dist/view.js', 'lib/view.js',
-                'build/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
+                buildEntry + '/view.mobile.js', 'dist/view.mobile.js', 'lib/view.mobile.js',
+                buildEntry + '/view.js', 'dist/view.js', 'lib/view.js',
+                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
                 // fallback
                 pkgJson.main || entry
             ], done);
