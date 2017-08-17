@@ -86,7 +86,6 @@ module.exports = function (source) {
         var camelName = getCamelName(pkgJson.name || pkg);
         var ret = {
             name: pkgJson.name || pkg,
-            entry: pkg,
             componentName: info.componentName || pkgJson.componentName,
             category: info.category || pkgJson.category || null
         };
@@ -100,26 +99,29 @@ module.exports = function (source) {
         if (entry === 'prototype') {
             return tryfiles(pkg, [
                 // trys
-                buildEntry + '/prototype.js', 'dist/prototype.js', 'lib/prototype.js', 'src/prototype.js',
+                buildEntry + '/prototype.js', 'dist/prototype.js', 'lib/prototype.js',
+                entry,
                 // fallback
-                entry
+                null
             ], done);
         }
         if (entry === 'prototypeView') {
             return tryfiles(pkg, [
                 // trys
-                buildEntry + '/prototypeView.js', 'dist/prototypeView.js', 'lib/prototypeView.js', 'src/prototypeView.js',
-                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js', 'src/'+camelName+'.js',
-                pkgJson.main || entry,
+                buildEntry + '/prototypeView.js', 'dist/prototypeView.js', 'lib/prototypeView.js', 'prototypeView.js',
+                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js', camelName+'.js',
+                buildEntry + '/view.js', 'dist/view.js', 'lib/view.js', 'view.js',
+                buildEntry + '/index.js', 'dist/index.js', 'lib/index.js', 'index.js',
                 // fallback
-                null
+                pkgJson.main || entry
             ], done);
         }
         if (entry === 'view') {
             return tryfiles(pkg, [
                 // trys
-                buildEntry + '/view.js', 'dist/view.js', 'lib/view.js', 'src/view.js',
-                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js', 'src/'+camelName+'.js',
+                buildEntry + '/view.js', 'dist/view.js', 'lib/view.js', 'view.js',
+                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js', camelName+'.js',
+                buildEntry + '/index.js', 'dist/index.js', 'lib/index.js', 'index.js',
                 // fallback
                 pkgJson.main || entry
             ], done);
@@ -127,9 +129,9 @@ module.exports = function (source) {
         if (entry === 'view.mobile') {
             return tryfiles(pkg, [
                 // trys
-                buildEntry + '/view.mobile.js', 'dist/view.mobile.js', 'lib/view.mobile.js', 'src/view.mobile.js',
-                buildEntry + '/view.js', 'dist/view.js', 'lib/view.js', 'src/view.js',
-                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js', 'src/'+camelName+'.js',
+                buildEntry + '/view.mobile.js', 'dist/view.mobile.js', 'lib/view.mobile.js',
+                buildEntry + '/view.js', 'dist/view.js', 'lib/view.js',
+                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
                 // fallback
                 pkgJson.main || entry
             ], done);
@@ -153,7 +155,7 @@ module.exports = function (source) {
     function complete(index, ret) {
         var fields = [
             '"name": "' + ret.name + '"',
-            '"module": ' + (ret.path ? ('require("'+ret.entry+'/'+ret.path+'")') : 'null')
+            '"module": ' + (ret.path ? ('require("'+ret.name+'/'+ret.path+'")') : 'null')
         ];
         if (ret.componentName) {
             fields.push('"componentName": "' + ret.componentName + '"');
