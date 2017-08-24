@@ -129,9 +129,10 @@ module.exports = function (source) {
         if (entry === 'view.mobile') {
             return tryfiles(pkg, [
                 // trys
-                buildEntry + '/view.mobile.js', 'dist/view.mobile.js', 'lib/view.mobile.js',
-                buildEntry + '/view.js', 'dist/view.js', 'lib/view.js',
-                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js',
+                buildEntry + '/view.mobile.js', 'dist/view.mobile.js', 'lib/view.mobile.js', 'view.mobile.js',
+                buildEntry + '/view.js', 'dist/view.js', 'lib/view.js', 'view.js',
+                buildEntry + '/'+camelName+'.js', 'dist/'+camelName+'.js', 'lib/'+camelName+'.js', camelName+'.js',
+                buildEntry + '/index.js', 'dist/index.js', 'lib/index.js', 'index.js',
                 // fallback
                 pkgJson.main || entry
             ], done);
